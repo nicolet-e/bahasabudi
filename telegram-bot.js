@@ -1,9 +1,9 @@
 /**
- * BahasaBudi AI — Telegram Bot
- * Uses long-polling (no webhook server required).
- * Requires: node-telegram-bot-api
+ * BahasaBudi AI — Bot Telegram
+ * Menggunakan kaedah long-polling (tiada pelayan webhook diperlukan).
+ * Memerlukan: node-telegram-bot-api
  *
- * Setup:
+ * Persediaan:
  *   npm install node-telegram-bot-api
  *   node telegram-bot.js
  */
@@ -96,10 +96,11 @@ function toTelegramHtml(text) {
 const MAIN_KEYBOARD = {
   reply_markup: {
     keyboard: [
-      [{ text: '📖 Grammar' },        { text: '✏️ Spelling (di/di-)' }],
-      [{ text: '📝 Sentence Construction' }, { text: '💬 Vocabulary' }],
-      [{ text: '🌿 Idioms (Peribahasa)' },   { text: '📄 Essay Writing' }],
-      [{ text: '🧪 Practice Questions' },    { text: '❓ Help' }],
+      [{ text: '📖 Tatabahasa' },          { text: '✏️ Ejaan (di / di-)' }],
+      [{ text: '📝 Bina Ayat' },            { text: '💬 Kosa Kata' }],
+      [{ text: '🌿 Peribahasa' },           { text: '📄 Karangan' }],
+      [{ text: '🔧 Imbuhan' },              { text: '🧪 Latihan & Soalan' }],
+      [{ text: '❓ Bantuan' }],
     ],
     resize_keyboard: true,
     one_time_keyboard: false,
@@ -107,16 +108,17 @@ const MAIN_KEYBOARD = {
   parse_mode: 'HTML',
 };
 
-// Map keyboard button labels to message text the engine understands
+// Peta butang papan kekunci kepada teks yang difahami oleh enjin
 const KEYBOARD_MAP = {
-  '📖 Grammar':                  'Explain Bahasa Melayu grammar',
-  '✏️ Spelling (di/di-)':        'Explain the difference between di as a preposition and di- as a prefix',
-  '📝 Sentence Construction':    'How to construct a Malay sentence step by step',
-  '💬 Vocabulary':                'Help me with vocabulary',
-  '🌿 Idioms (Peribahasa)':      'Explain peribahasa and simpulan bahasa',
-  '📄 Essay Writing':            'Help me with karangan essay writing',
-  '🧪 Practice Questions':       'Give me practice questions on Bahasa Melayu grammar and spelling',
-  '❓ Help':                     'hello',
+  '📖 Tatabahasa':        'Terangkan tatabahasa Bahasa Melayu',
+  '✏️ Ejaan (di / di-)':  'Terangkan perbezaan di kata sendi dan di- imbuhan',
+  '📝 Bina Ayat':         'Bagaimana cara membina ayat yang betul langkah demi langkah',
+  '💬 Kosa Kata':         'Bantu saya dengan kosa kata',
+  '🌿 Peribahasa':        'Terangkan peribahasa dan simpulan bahasa',
+  '📄 Karangan':          'Bantu saya menulis karangan',
+  '🔧 Imbuhan':           'Terangkan imbuhan awalan dan akhiran',
+  '🧪 Latihan & Soalan':  'Berikan saya latihan Bahasa Melayu',
+  '❓ Bantuan':           'hello',
 };
 
 // ── Message handler ─────────────────────────────────────────────────────────
@@ -133,9 +135,9 @@ bot.on('message', async (msg) => {
   // Send "typing…" action
   await bot.sendChatAction(chatId, 'typing').catch(() => {});
 
-  // Process through engine
+  // Proses melalui enjin
   const result = engine.processMessage(inputText, session);
-  setSession(chatId, result.session);
+  setSession(chatId, result.session || result.sesi);
 
   const responseHtml = toTelegramHtml(result.text);
 
@@ -161,8 +163,8 @@ bot.onText(/\/start/, async (msg) => {
 
   await bot.sendChatAction(chatId, 'typing').catch(() => {});
 
-  const result = engine.processMessage('hello', session);
-  setSession(chatId, result.session);
+  const result = engine.processMessage('selamat', session);
+  setSession(chatId, result.session || result.sesi);
 
   const responseHtml = toTelegramHtml(result.text);
 
@@ -175,7 +177,7 @@ bot.onText(/\/start/, async (msg) => {
 
 // ── /help command ───────────────────────────────────────────────────────────
 bot.onText(/\/help/, async (msg) => {
-  const helpText = `<b>BahasaBudi AI — Commands</b>\n\n/start — Restart the bot and see the welcome message\n/help — Show this help message\n/reset — Reset your learning session\n\n<b>Topics I can help with:</b>\n• Grammar (Tatabahasa)\n• Spelling (Ejaan)\n• Punctuation (Tanda Baca)\n• Vocabulary (Kosa Kata)\n• Idioms (Peribahasa &amp; Simpulan Bahasa)\n• Sentence Construction (Bina Ayat)\n• Essay Writing (Karangan)\n\nJust type your question or use the keyboard below!`;
+  const helpText = `<b>BahasaBudi AI — Arahan Bot</b>\n\n/start — Mulakan semula bot dan lihat mesej selamat datang\n/help — Paparkan mesej bantuan ini\n/reset — Tetapkan semula sesi pembelajaran anda\n\n<b>Topik yang boleh saya bantu:</b>\n• Tatabahasa\n• Ejaan\n• Tanda Baca\n• Kosa Kata\n• Peribahasa &amp; Simpulan Bahasa\n• Pembinaan Ayat\n• Penulisan Karangan\n• Imbuhan\n\nTaip soalan anda atau gunakan papan kekunci di bawah!`;
   await bot.sendMessage(msg.chat.id, helpText, { parse_mode: 'HTML', ...MAIN_KEYBOARD }).catch(console.error);
 });
 
@@ -183,7 +185,7 @@ bot.onText(/\/help/, async (msg) => {
 bot.onText(/\/reset/, async (msg) => {
   const chatId = msg.chat.id;
   sessions.delete(chatId);
-  await bot.sendMessage(chatId, '✅ Your session has been reset. Let\'s start fresh!\n\nWhat Bahasa Melayu topic would you like to learn today?', MAIN_KEYBOARD).catch(console.error);
+  await bot.sendMessage(chatId, '✅ Sesi anda telah ditetapkan semula. Jom mulakan dari awal!\n\nApakah topik Bahasa Melayu yang ingin anda pelajari hari ini?', MAIN_KEYBOARD).catch(console.error);
 });
 
 // ── Error handling ───────────────────────────────────────────────────────────
@@ -195,5 +197,5 @@ bot.on('error', (err) => {
   console.error('Bot error:', err.message);
 });
 
-console.log('✅ BahasaBudi AI Telegram bot is running (polling mode)…');
-console.log('   Press Ctrl+C to stop.');
+console.log('✅ Bot Telegram BahasaBudi AI sedang berjalan (mod polling)…');
+console.log('   Tekan Ctrl+C untuk berhenti.');

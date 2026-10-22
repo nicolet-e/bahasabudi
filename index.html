@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BahasaBudi AI — Bahasa Melayu Learning Chatbot</title>
+  <title>BahasaBudi AI — Pembantu Pembelajaran Bahasa Melayu</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -279,7 +279,7 @@
     </div>
     <div class="chat-status">
       <div class="status-dot"></div>
-      Online
+      Dalam Talian
     </div>
   </div>
 
@@ -289,12 +289,12 @@
   <!-- Input -->
   <div class="chat-input-area">
     <div class="chat-input-row">
-      <textarea id="userInput" rows="1" placeholder="Type your question here…" aria-label="Message input"></textarea>
-      <button id="sendBtn" aria-label="Send message">
+      <textarea id="userInput" rows="1" placeholder="Taip soalan anda di sini…" aria-label="Kotak input mesej"></textarea>
+      <button id="sendBtn" aria-label="Hantar mesej">
         <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
       </button>
     </div>
-    <p class="input-hint">Ask about grammar, spelling, vocabulary, idioms, sentence construction, or essay writing.</p>
+    <p class="input-hint">Tanya tentang tatabahasa, ejaan, kosa kata, peribahasa, pembinaan ayat atau karangan.</p>
   </div>
 
 </div>
@@ -408,13 +408,14 @@
 
   // ── Quick-reply chips ────────────────────────────────────────────────────
   const QUICK_REPLIES = [
-    { label: 'Grammar', msg: 'Explain Bahasa Melayu grammar' },
-    { label: 'Spelling (di/di-)', msg: 'Explain the difference between di as a preposition and di- as a prefix' },
-    { label: 'Vocabulary', msg: 'Help me with vocabulary' },
-    { label: 'Sentence Construction', msg: 'How to construct a Malay sentence step by step' },
-    { label: 'Idioms', msg: 'Explain peribahasa and simpulan bahasa' },
-    { label: 'Essay Writing', msg: 'Help me with karangan writing' },
-    { label: 'Practice Questions', msg: 'Give me practice questions on Bahasa Melayu' },
+    { label: '📖 Tatabahasa',              msg: 'Terangkan tatabahasa Bahasa Melayu' },
+    { label: '✏️ Ejaan (di / di-)',         msg: 'Terangkan perbezaan di kata sendi dan di- imbuhan' },
+    { label: '💬 Kosa Kata',               msg: 'Bantu saya dengan kosa kata' },
+    { label: '📝 Bina Ayat',               msg: 'Bagaimana cara membina ayat yang betul langkah demi langkah' },
+    { label: '🌿 Peribahasa',              msg: 'Terangkan peribahasa dan simpulan bahasa' },
+    { label: '📄 Karangan',                msg: 'Bantu saya menulis karangan' },
+    { label: '🔧 Imbuhan',                 msg: 'Terangkan imbuhan awalan dan akhiran' },
+    { label: '🧪 Latihan & Soalan',        msg: 'Berikan saya latihan Bahasa Melayu' },
   ];
 
   function showQuickReplies() {
@@ -482,7 +483,7 @@
     setTimeout(() => {
       hideTyping();
       const result = engine.processMessage(text, session);
-      session = result.session;
+      session = result.session || result.sesi;
       appendMessage(result.text, 'bot');
     }, delay);
   }
@@ -506,7 +507,7 @@
   // ── Initial greeting ─────────────────────────────────────────────────────
   (function init() {
     const result = engine.processMessage('hello', session);
-    session = result.session;
+    session = result.session || result.sesi;
     appendMessage(result.text, 'bot');
     showQuickReplies();
   })();
