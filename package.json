@@ -1,0 +1,13 @@
+{
+  "name": "bahasabudi-ai",
+  "version": "1.0.0",
+  "description": "BahasaBudi AI — Rule-based Bahasa Melayu educational chatbot",
+  "main": "telegram-bot.js",
+  "scripts": {
+    "telegram": "node telegram-bot.js",
+    "web": "npx serve . -p 3000"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
